@@ -45,6 +45,7 @@ import pandas as pd
 from coleman4hcs.agent import Agent, RewardSlidingWindowAgent, ContextualAgent, SlidingWindowContextualAgent
 from coleman4hcs.exceptions import QException
 
+import math
 
 class Policy:
     """
@@ -499,3 +500,46 @@ class SWLinUCBPolicy(LinUCBPolicy):
         arms = pd.DataFrame(records, columns=['Name', 'Q'])
         arms.sort_values(by='Q', ascending=False, inplace=True)
         return arms['Name'].tolist()
+
+
+class SoftmaxPolicy(Policy):
+    
+    #Softmax Policy for Multi-Armed Bandits (MAB).
+    
+
+    def __init__(self, temperature):
+        
+        #Initialize SoftmaxPolicy.
+
+        #param temperature: The temperature parameter for softmax function.
+        
+        self.temperature = temperature
+
+    def __str__(self):
+        return f"Softmax (Temperature={self.temperature})"
+
+    def choose_all(self, agent: Agent):
+        
+        #Choose all actions based on the softmax policy.
+        
+        action_values = agent.actions['Q'].values.tolist()
+        probabilities = self.softmax(action_values)
+
+        # Check for NaN probabilities
+        if np.any(np.isnan(probabilities)):
+            # If NaNs are present, return uniform probabilities
+            probabilities = np.ones_like(probabilities) / len(probabilities)
+
+        # Choose actions based on probabilities
+        chosen_actions = np.random.choice(agent.actions['Name'].tolist(), size=len(agent.actions), p=probabilities, replace=False)
+        return chosen_actions.tolist()
+
+    def softmax(self, action_values):
+        #Compute softmax probabilities based on action values.
+
+        #param action_values: List of action values.
+        #return: Softmax probabilities.
+    
+        exp_values = np.exp(np.array(action_values) / self.temperature)
+        probabilities = exp_values / np.sum(exp_values)
+        return probabilities

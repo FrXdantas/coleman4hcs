@@ -11,7 +11,7 @@ verbose = true  # You can toggle this flag to enable verbose logging
 scheduled_time_ratio = [0.1, 0.5, 0.8]
 datasets_dir = "examples"
 # datasets = ["fakedata", "square@retrofit"]
-datasets = ["alibaba@druid"]
+datasets = ["alibaba@druid","alibaba@fatjson","lexisnexis","deeplearning4j"]
 
 # WTS
 #datasets_dir = "examples/core@dune-common"
@@ -24,7 +24,8 @@ datasets = ["alibaba@druid"]
 experiment_dir = "results/experiments/"
 rewards = ["RNFail", "TimeRank"]
 #policies = ['Random', 'Greedy', 'EpsilonGreedy', 'UCB', 'FRRMAB', 'LinUCB', 'SWLinUCB']
-policies = ['Random', 'Greedy', 'EpsilonGreedy', 'UCB', 'FRRMAB']
+#policies = ['Random', 'Greedy', 'EpsilonGreedy', 'UCB', 'FRRMAB']
+policies = ['Random', 'Greedy', 'EpsilonGreedy', 'UCB', 'FRRMAB', 'Softmax']
 
 [algorithm.frrmab]
 # Algorithm Configuration for FRRMAB
@@ -53,6 +54,11 @@ window_sizes = [100]
 timerank = { alpha = 0.5 }
 rnfail = { alpha = 0.5 }
 
+[algorithm.softmax]
+# Algorithm Configuration for SoftmaxPolicy
+timerank = { temperature = 0.5 }
+rnfail = { temperature = 0.5 }
+
 [hcs_configuration]
 # HCS Configuration
 wts_strategy = false
@@ -63,3 +69,4 @@ previous_build = ['Duration', 'NumRan', 'NumErrors']
 [contextual_information.feature_group]
 feature_group_name = "time_execution"
 feature_group_values = ['Duration', 'NumErrors']
+
